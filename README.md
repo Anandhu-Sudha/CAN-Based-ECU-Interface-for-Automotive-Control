@@ -56,7 +56,7 @@ To run this project:
 4. Power the boards using a stable 5V power supply.
 5. Press the switches on ECU 1 (Node A) and observe LED responses on ECU 2 (Node B).
 
-## Codes are uploaded in the respective folders.
+## -------Codes are uploaded in the respective folders-------
 
 
 
