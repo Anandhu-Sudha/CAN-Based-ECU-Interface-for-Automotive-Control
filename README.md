@@ -8,6 +8,10 @@ This project demonstrates the implementation of inter-ECU communication using th
 
 The goal of this project is to enable communication between two or more ECUs (Electronic Control Units) configured in a **multimaster** setup with minimal wiring complexity. The CAN protocol allows multiple nodes to communicate over a shared bus without a host computer, making it ideal for real-time automotive control applications.
 
+## Working Video
+
+https://github.com/user-attachments/assets/f2d31253-ad66-47df-94bc-f58fa19650fc
+
 ## Key Features
 
 - **Multimaster Communication**: Each ECU can send and receive messages independently.
@@ -19,7 +23,7 @@ The goal of this project is to enable communication between two or more ECUs (El
 ## Hardware Components
 
 - 2 × **LPC2129 Microcontrollers**
-- 2 × **MCP2551 CAN Transceivers**
+- 2 × **MCP2551 CAN Transceivers** (Some developments comes with built-in can ransceivers, in that case find the canh and canl connections)
 - 4 × Push Button Switches (Headlight, Left Indicator, Right Indicator, Hazard lights)
 - 8 × LEDs to represent light outputs
 - Power Supply (5V regulated)
@@ -30,7 +34,8 @@ The goal of this project is to enable communication between two or more ECUs (El
 - **ECU 1 (Control Unit)**: Reads input from switches (headlight, left/right indicators, Hazard lights) and sends corresponding CAN messages.
 - **ECU 2 (Actuator Unit)**: Receives CAN messages and controls LEDs to represent the activation of headlights, indicators and Hazard lights.
 
-## Block Diagram
+## Connection Diagram
+![Image](https://github.com/user-attachments/assets/653c22c2-8396-4d62-823d-8281b1eda03b)
 
 
 ## Future Improvements
