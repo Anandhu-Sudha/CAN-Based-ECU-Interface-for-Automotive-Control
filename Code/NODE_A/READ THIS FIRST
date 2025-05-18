@@ -1,0 +1,4 @@
+Create new projects for each nodes.
+Copy these codes and save as c files.
+Compile these codes and create HEX file.
+Upload these HEX file into NODE A (here tx node, with switches)
