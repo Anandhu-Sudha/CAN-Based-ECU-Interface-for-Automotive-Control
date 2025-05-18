@@ -1,0 +1,129 @@
+/*NODE A (Transmitter side here)*/
+#include <LPC21xx.H>
+#include "header.h"
+/*
+In node B (RX Side):
+Identifier 0x100 | Data 0x00 :	 Headlight ON
+Identifier 0x100 | Data 0x01 :	 Headlight OFF
+Identifier 0x101 | Data 0x02 :	 Left indicator ON
+Identifier 0x101 | Data 0x03 :	 Left indicator OFF
+Identifier 0x101 | Data 0x04 :	 Right indicator ON
+Identifier 0x101 | Data 0x05 :	 Right indicator OFF
+Identifier 0x102 | Data 0x06 :	 Hazard Light ON
+Identifier 0x102 | Data 0x07 :	 Hazard Light OFF
+*/
+#define SW1 ((IOPIN0>>2)&1)
+#define SW2 ((IOPIN0>>3)&1)
+#define SW3 ((IOPIN0>>4)&1)
+#define SW4 ((IOPIN0>>5)&1)
+
+CAN1 m1,m2,m3;
+int main()
+{
+int left_indi_status=0;
+int right_indi_status=0;
+int headlight_status=0;
+int hazard_status=0;
+	
+	can1_init();
+	m1.id=0x100;
+	m1.rtr=0;
+	m1.dlc=1;
+	m1.byteA=0;
+	
+	m2.id=0x101;
+	m2.rtr=0;
+	m2.dlc=1;
+	m2.byteA=0;
+	
+	m3.id=0x102;
+	m3.rtr=0;
+	m3.dlc=1;
+	m3.byteA=0;
+
+	uart0_init(9600);
+	uart0_tx_string("in node A (tx)\r\n");
+	
+	while(1)
+		{
+		
+						if(SW1==0)//  for left indicator
+						{
+							delay_ms(50);
+							while(SW1==0);
+							left_indi_status^=1;
+							
+							if(left_indi_status)
+							{	
+							m2.byteA=0x02;
+							hazard_status=0;// to reset the hazard light conditon (if turned on already)
+							uart0_tx_string("left indicator on\r\n");
+							}
+							else
+							{
+							m2.byteA=0x03;
+							uart0_tx_string("left indicator off\r\n");
+							}
+							can1_tx(m2);//send data-frame
+						}
+
+						if(SW2==0) // for right indicator
+						{
+							delay_ms(50);
+							while(SW2==0);
+							right_indi_status^=1;
+							
+							if(right_indi_status)
+							{	
+							m2.byteA=0x04;
+							hazard_status=0;// to reset the hazard light conditon (if turned on already)
+							uart0_tx_string("right indicator on\r\n");
+							}
+							else
+							{
+							m2.byteA=0x05;
+							uart0_tx_string("right indicator off\r\n");
+							}
+							can1_tx(m2);//send data-frame
+						}
+
+						if(SW3==0) // for headlight status
+						{
+							delay_ms(50);
+							while(SW3==0);
+							headlight_status^=1;
+							
+							if(headlight_status)
+							{	
+							m1.byteA=0x00;
+							uart0_tx_string("headlight on\r\n");
+							}
+							else
+							{
+							m1.byteA=0x01;
+							uart0_tx_string("headlight off\r\n");
+							}
+							can1_tx(m1);//send data-frame
+						}
+
+						if(SW4==0) // for hazard light status
+						{
+							delay_ms(50);
+							while(SW4==0);
+							if(hazard_status==0)
+							{	
+							m3.byteA=0x06;
+							hazard_status=1;
+							uart0_tx_string("hazard on\r\n");
+							}
+							else
+							{
+							m3.byteA=0x07;
+							hazard_status=0;
+							uart0_tx_string("hazard off\r\n");
+							}
+							can1_tx(m3);//send data-frame
+						}
+
+		}
+}

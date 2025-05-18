@@ -1,0 +1,37 @@
+// header file
+#ifndef __HEADER_H_
+#define __HEADER_H_
+
+typedef unsigned int u32;
+typedef 	signed int s32;
+typedef unsigned char u8;
+typedef 	signed char s8;
+typedef unsigned short int u16;
+typedef   signed short int s16;
+
+
+void delay_sec(u32 sec);
+void delay_ms(unsigned int ms);
+
+unsigned char uart0_rx(void);
+void uart0_tx(unsigned char data);
+void uart0_init(unsigned int baud);
+void uart0_tx_string(char *ptr);
+void uart0_tx_integer(int num);
+void uart0_tx_float(float num);
+void uart0_tx_hex(int num);
+
+typedef struct CAN1_MSG{
+	u32 id;
+	u32 byteA;
+	u32 byteB;
+	u8 rtr;
+	u8 dlc;
+}CAN1;
+
+extern void can1_tx(CAN1 v);
+extern void can1_init(void);
+
+#endif
+
+
