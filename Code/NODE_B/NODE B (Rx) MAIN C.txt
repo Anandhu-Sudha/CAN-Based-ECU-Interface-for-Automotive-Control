@@ -1,0 +1,153 @@
+/*NODE B (Receiver side here)*/
+#include <LPC21xx.H>
+#include "header.h"
+#define LEFT_INDICATOR (0x00000380)
+#define RIGHT_INDICATOR (0x0000001C)
+#define HEADLIGHT ((1<<5)|(1<<6))
+
+CAN1 r1;
+u8 flag;
+int i,j;
+void left_indi_swipe(void);
+void right_indi_swipe(void);
+void hazard_light_swipe(void);
+
+int left_indi=0;
+int right_indi=0;
+int left_index=7;
+int right_index=4;
+
+int hazard_light=0;
+	
+unsigned int left_last_blink_time = 0;
+unsigned int right_last_blink_time = 0;
+
+int main()
+	{
+	IODIR0|=LEFT_INDICATOR|RIGHT_INDICATOR|HEADLIGHT;
+	IOSET0|=LEFT_INDICATOR|RIGHT_INDICATOR|HEADLIGHT;
+	can1_init();
+	uart0_init(9600);
+	config_vic_for_can1();
+	init_timer0();
+	
+	uart0_tx_string("in node B (rx)\r\n");
+	while(1)
+		{
+		
+		//can1_rx(&r1);
+		if(flag==1)
+			{//dataframe is received using can1 rx interrupt
+		switch(r1.byteA&0xFF)
+			{
+			case 0x00: {
+									IOCLR0=HEADLIGHT;
+									uart0_tx_string("HEADLIGHT ON\r\n"); 
+									break;
+									}
+			case 0x01: {
+									IOSET0=HEADLIGHT;
+									uart0_tx_string("HEADLIGHT OFF\r\n"); 
+									break;
+									}	
+			case 0x02: {
+									/*blink L Indi*/
+									left_indi=1;
+									right_indi=0;
+									hazard_light=0;
+									uart0_tx_string("LEFT ON\r\n");
+									break;
+									}
+			case 0x03: {
+									/*blink L Indi*/
+									left_indi=0;
+									uart0_tx_string("LEFT OFF\r\n");
+									break;
+									}
+			case 0x04: {
+									/*blink R Indi*/
+									right_indi=1;
+									left_indi=0;
+									hazard_light=0;
+									uart0_tx_string("RIGHT ON\r\n");
+									break;
+									}
+			case 0x05: {
+									/*blink R Indi*/
+									right_indi=0;
+									uart0_tx_string("RIGHT OFF\r\n");
+									break;
+									}
+
+			case 0x06: {
+									/*hazard on*/
+									right_indi=0;
+									left_indi=0;
+									hazard_light=1;
+									uart0_tx_string("hazard on\r\n");
+									break;
+									}
+			case 0x07: {
+									/*hazard off*/
+									right_indi=0;
+									left_indi=0;
+									hazard_light=0;
+									uart0_tx_string("hazard off\r\n");
+									break;
+									}
+			}
+				flag=0; // clears the interrrupt
+			}
+			
+				if(left_indi==1)
+				left_indi_swipe();
+
+				if(right_indi==1)
+				right_indi_swipe();
+				
+				if(hazard_light==1)
+				hazard_light_swipe();					   
+					
+					
+		}
+}
+
+void left_indi_swipe(void)
+{
+				for(i=7;i<=9;i++)
+					{
+						IOCLR0|=1<<i;
+						delay_ms(200);
+					}
+					IOSET0|=LEFT_INDICATOR;
+					delay_ms(200);
+}
+
+void right_indi_swipe(void)
+{
+				for(i=4;i>=2;i--)
+					{
+						IOCLR0|=1<<i;
+						delay_ms(200);
+					}
+					IOSET0|=RIGHT_INDICATOR;
+					delay_ms(200);
+}
+
+
+void hazard_light_swipe(void)
+{
+for(i=7,j=4;(j>=2)&&(i<=9);i++,j--)
+{
+						IOCLR0|=(1<<i)|(1<<j);
+						delay_ms(200);
+					}
+					IOSET0|=RIGHT_INDICATOR|LEFT_INDICATOR;
+					delay_ms(200);
+
+}
+
+
+
+
+
