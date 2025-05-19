@@ -22,7 +22,7 @@ https://github.com/user-attachments/assets/f2d31253-ad66-47df-94bc-f58fa19650fc
 ## Hardware Components
 
 - 2 × **LPC2129 Microcontrollers**
-- 2 × **MCP2551 CAN Transceivers** (Some developments comes with built-in can ransceivers, in that case find the canh and canl connections)
+- 2 × **MCP2551 CAN Transceivers** (Some development boards comes with built-in can transceivers, in that case find the canh and canl connections)
 - 4 × Push Button Switches (Headlight, Left Indicator, Right Indicator, Hazard lights)
 - 8 × LEDs to represent light outputs
 - Power Supply (5V regulated)
